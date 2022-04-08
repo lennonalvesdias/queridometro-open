@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { UserPlaceholder } from '@dummy-system';
 import { useGetHistory, useGetVotesFromDate } from '@services';
 import { formatDate } from '@utils';
+var gravatar = require('gravatar');
 
 export default function History() {
   const [selectedDate, setSelectedDate] = useState<string>('-1');
@@ -147,8 +148,8 @@ export default function History() {
             selectedDate !== '-1' &&
             fillWithUserPlaceholder(placeholderQuantity)}
 
-          {votesOnDate &&
-            votesOnDate.map(person => (
+          {votesOnDate && votesOnDate.history &&
+            votesOnDate.history.map(person => (
               <div
                 key={'div:' + person?.name}
                 className={`row justify-start text-2xl items-center py-2 gap-1 grid grid-flow-col`}
@@ -158,14 +159,14 @@ export default function History() {
                   <div
                     className="w-1/2 p-6 shadow rounded-full"
                     style={{
-                      background: `url("${person?.photo}") no-repeat center center`,
+                      background: `url("${gravatar.url(person?.email)}") no-repeat center center`,
                       backgroundSize: 'cover',
                     }}
                   />
                 </div>
 
                 {/* Lista de emojis/reações */}
-                {person.emojiList.map(
+                {person?.emojis?.map(
                   emoji =>
                     emoji?.votes > 0 && (
                       <div

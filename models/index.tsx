@@ -18,6 +18,9 @@ export interface User {
   /** Foto do participante. */
   photo?: string;
 
+  /** Email do participante. */
+  email: string;
+
   /** Reações associadas ao usuário. */
   emojiList?: Emoji[];
 }

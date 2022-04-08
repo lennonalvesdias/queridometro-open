@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import clsx from 'clsx';
 import axios from 'axios';
 import { useGetEmojis, useGetUsers } from '@services';
+var gravatar = require('gravatar');
 
 export default function Vote() {
   const router = useRouter();
@@ -55,8 +56,8 @@ export default function Vote() {
 
       await axios
         .post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/vote`, {
+          user,
           valuesFromForm,
-          userList,
         })
         .then(res => {
           const redirectUrl = res?.data?.url ?? '/';
@@ -221,7 +222,7 @@ export default function Vote() {
                       aria-label={`Foto de ${user.name}`}
                       className="w-50 p-6 shadow rounded-full"
                       style={{
-                        background: `url("${user?.photo}") no-repeat center center`,
+                        background: `url("${gravatar.url(user?.email)}") no-repeat center center`,
                         backgroundSize: 'cover',
                       }}
                     />

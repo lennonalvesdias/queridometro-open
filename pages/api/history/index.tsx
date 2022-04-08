@@ -23,7 +23,7 @@ export const getHistory = async (
   res: NextApiResponse,
 ): Promise<NextApiResponse> => {
   return axios
-    .get(`${process.env.FIREBASE_URL}/history.json?shallow=true`)
+    .get(`${process.env.API_URL}/history`)
     .then(response => {
       const votes = response?.data ?? [];
       res.status(200).json(votes);

@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { GenericObject, User } from '@models';
 import axios from 'axios';
 import { dateNow } from '@utils';
-import { mutate } from 'swr';
+// import { mutate } from 'swr';
 
 export default async (
   req: NextApiRequest,
@@ -26,7 +26,8 @@ export const postVote = async (
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<NextApiResponse> => {
-  const userList: User[] = req.body?.userList;
+  // const userList: User[] = req.body?.userList;
+  const user: User = req.body?.user;
   const valuesFromForm: GenericObject = req.body?.valuesFromForm;
 
   // Confere senha
@@ -40,22 +41,14 @@ export const postVote = async (
   }
 
   const date = dateNow();
-  const urlToday = `${process.env.NEXT_PUBLIC_BASE_URL}/api/history/${date}`;
-  let votesFromToday: User[] = await axios.get(urlToday).then(res => res?.data);
-
-  votesFromToday = votesFromToday?.length !== 0 ? votesFromToday : userList;
-
-  const votosGerados: User[] = votesFromToday.map(user => {
-    user.emojiList
-      .filter(emoji => emoji.symbol === valuesFromForm[user.name])
-      .forEach(emoji => (emoji.votes += 1));
-    return user;
-  });
 
   return axios
-    .put(`${process.env.FIREBASE_URL}/history/${date}.json`, votosGerados)
+    .post(`${process.env.API_URL}/vote`, {
+      user,
+      valuesFromForm,
+      date,
+    })
     .then(() => {
-      mutate(urlToday);
       res.status(201).json({ url: `/history/${date}` });
       return res;
     })

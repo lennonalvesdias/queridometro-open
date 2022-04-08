@@ -57,6 +57,10 @@ export function useGetEmojis() {
   return { emojis, loading, error };
 }
 
+function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index;
+}
+
 /**
  * Retorna todas as datas em que o Queridômetro possui votos.
  *
@@ -66,17 +70,22 @@ export function useGetEmojis() {
  */
 export function useGetHistory() {
   let dates: any[];
-  const { data: votes, error } = useSWR(
+  const { data: history, error } = useSWR(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/history`,
     fetcher,
   );
 
-  if (votes) dates = orderDates(Object.keys(votes));
+  if (history) {
+    dates = history?.votes?.map((vote: { date: any }) => vote?.date);
+    dates = dates?.filter(onlyUnique);
+  }
 
-  const loading: boolean = !votes && !error;
+  // if (history) dates = orderDates(Object.keys(history.votes));
+
+  const loading: boolean = !history && !error;
   return {
     data: {
-      votes,
+      votes: history,
       dates,
     },
     loading,
